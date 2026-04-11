@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Build Your Burger — Shake Shack Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #2d6a2d;
+    --green-mid: #3d7a3b;
+    --green-light: #5a9e57;
+    --green-pale: #eaf3de;
+    --cream: #f5f0e8;
+    --tan: #e8dfd0;
+    --charcoal: #1e1e1e;
+    --dark: #2c2c2c;
+    --mid: #555;
+    --muted: #888;
+    --border: #d4cfc7;
+    --white: #ffffff;
+    --gold: #c8a951;
+    --red: #c0392b;
+    --amber: #e67e22;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--charcoal);
+    padding: 16px 20px 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .header-left {}
+  .header-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--green-light);
+    margin-bottom: 2px;
+  }
+  .header-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 0.05em;
+    color: var(--white);
+    line-height: 1;
+  }
+  .cal-pill {
+    background: var(--green);
+    border-radius: 100px;
+    padding: 6px 14px;
+    text-align: center;
+    min-width: 90px;
+    flex-shrink: 0;
+  }
+  .cal-pill-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--white);
+    line-height: 1;
+    transition: all 0.2s;
+  }
+  .cal-pill-label {
+    font-size: 10px;
+    color: var(--green-light);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* BURGER VISUAL */
+  .burger-section {
+    background: var(--charcoal);
+    padding: 0 20px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .burger-stage {
+    width: 100%;
+    max-width: 320px;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0px;
+    position: relative;
+  }
+  .burger-empty {
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+    padding: 30px 0;
+    letter-spacing: 0.02em;
+  }
+  .b-layer {
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: layerDrop 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  @keyframes layerDrop {
+    from { opacity: 0; transform: translateY(-12px) scaleX(0.85); }
+    to   { opacity: 1; transform: translateY(0) scaleX(1); }
+  }
+  .b-layer-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.92);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90%;
+    letter-spacing: 0.02em;
+  }
+
+  /* MACRO BAR */
+  .macro-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    padding: 14px 20px;
+    background: var(--dark);
+  }
+  .macro-item {}
+  .macro-name {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .macro-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: var(--white);
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .macro-track {
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    margin-top: 4px;
+    overflow: hidden;
+  }
+  .macro-fill {
+    height: 3px;
+    border-radius: 2px;
+    transition: width 0.3s ease, background 0.3s;
+    background: var(--green-light);
+  }
+  .macro-fill.warn { background: var(--gold); }
+  .macro-fill.over { background: var(--red); }
+
+  /* STEPS */
+  .steps { padding: 16px 20px 100px; max-width: 480px; margin: 0 auto; }
+
+  .step { margin-bottom: 24px; }
+  .step-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .step-dot {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--green);
+    color: var(--white);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    letter-spacing: 0;
+  }
+  .step-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--charcoal);
+  }
+  .step-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: 4px;
+    font-weight: 400;
+  }
+
+  .opts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .opts-grid.wide { grid-template-columns: 1fr 1fr 1fr; }
+
+  .opt {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    -webkit-user-select: none;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .opt:active { transform: scale(0.97); }
+  .opt.selected {
+    border-color: var(--green);
+    background: var(--green-pale);
+  }
+  .opt.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 6px; right: 8px;
+    font-size: 11px;
+    color: var(--green);
+    font-weight: 700;
+  }
+  .opt-emoji { font-size: 22px; margin-bottom: 4px; display: block; }
+  .opt-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--charcoal);
+    line-height: 1.2;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .opt-cal {
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .opt.selected .opt-cal { color: var(--green); }
+  .opt.selected .opt-name { color: var(--green); }
+
+  /* TOPPING CHIPS (multi) */
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .chip {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 100px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--mid);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; gap: 5px;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .chip:active { transform: scale(0.96); }
+  .chip.selected {
+    background: var(--green);
+    border-color: var(--green);
+    color: var(--white);
+  }
+  .chip-cal { font-size: 11px; opacity: 0.7; }
+
+  /* BOTTOM CTA */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--charcoal);
+    padding: 12px 20px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 200;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .complete-text {
+    font-size: 13px;
+    color: var(--muted);
+    flex: 1;
+    line-height: 1.3;
+  }
+  .complete-text strong { color: var(--white); font-weight: 600; display: block; }
+  .cta-btn {
+    background: var(--green);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    padding: 12px 22px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    flex-shrink: 0;
+    letter-spacing: 0.01em;
+  }
+  .cta-btn:active { transform: scale(0.97); background: var(--green-mid); }
+  .cta-btn:disabled { background: #555; cursor: default; }
+
+  /* RECEIPT MODAL */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 500;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .modal-backdrop.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--white);
+    border-radius: 20px 20px 0 0;
+    padding: 24px 24px 40px;
+    width: 100%;
+    max-width: 480px;
+    transform: translateY(40px);
+    transition: transform 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+  }
+  .modal-backdrop.open .modal { transform: translateY(0); }
+  .modal-handle {
+    width: 40px; height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+  .receipt-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.05em;
+    color: var(--charcoal);
+    margin-bottom: 4px;
+  }
+  .receipt-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .receipt-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--border);
+    font-size: 14px;
+  }
+  .receipt-item:last-child { border-bottom: none; }
+  .receipt-item-name { color: var(--charcoal); }
+  .receipt-item-cal { color: var(--muted); font-size: 13px; }
+  .receipt-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 0 0;
+    border-top: 2px solid var(--charcoal);
+    margin-top: 6px;
+  }
+  .receipt-total-label { font-weight: 600; font-size: 15px; }
+  .receipt-total-val { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--green); }
+  .macro-summary {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    background: var(--tan);
+    border-radius: 12px;
+    padding: 12px 16px;
+  }
+  .ms-item { flex: 1; text-align: center; }
+  .ms-val { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--charcoal); }
+  .ms-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .close-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    background: var(--charcoal);
+    color: var(--white);
+    border: none;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .close-btn:active { opacity: 0.85; }
+
+  .divider-line {
+    height: 1px;
+    background: var(--tan);
+    margin: 8px 0 20px;
+  }
+
+  /* SCROLL HINT */
+  .scroll-hint {
+    text-align: center;
+    padding: 8px;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* Shake Shack branding note at top */
+  .demo-badge {
+    background: var(--green);
+    color: rgba(255,255,255,0.85);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-badge">Interactive Demo · HADM 3650 · Cornell SHA</div>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-logo">Shake Shack</div>
+    <div class="header-title">Build Your Burger</div>
+  </div>
+  <div class="cal-pill">
+    <div class="cal-pill-num" id="cal-display">–</div>
+    <div class="cal-pill-label">calories</div>
+  </div>
+</div>
+
+<div class="burger-section">
+  <div class="burger-stage" id="burger-stage">
+    <div class="burger-empty" id="burger-empty">Select a protein to start ↓</div>
+  </div>
+</div>
+
+<div class="macro-bar" id="macro-bar">
+  <div class="macro-item">
+    <div class="macro-name">Protein</div>
+    <div class="macro-val" id="m-protein">–</div>
+    <div class="macro-track"><div class="macro-fill" id="mf-protein" style="width:0%"></div></div>
+  </div>
+  <div class="macro-item">
+    <div class="macro-name">Fat</div>
+    <div class="macro-val" id="m-fat">–</div>
+    <div class="macro-track"><div class="macro-fill" id="mf-fat" style="width:0%"></div></div>
+  </div>
+  <div class="macro-item">
+    <div class="macro-name">Carbs</div>
+    <div class="macro-val" id="m-carbs">–</div>
+    <div class="macro-track"><div class="macro-fill" id="mf-carbs" style="width:0%"></div></div>
+  </div>
+</div>
+
+<div class="steps">
+
+  <div class="step">
+    <div class="step-head">
+      <div class="step-dot">1</div>
+      <div class="step-name">Protein <span class="step-hint">required</span></div>
+    </div>
+    <div class="opts-grid" id="protein-grid"></div>
+  </div>
+
+  <div class="divider-line"></div>
+
+  <div class="step">
+    <div class="step-head">
+      <div class="step-dot">2</div>
+      <div class="step-name">Bun <span class="step-hint">required</span></div>
+    </div>
+    <div class="opts-grid" id="bun-grid"></div>
+  </div>
+
+  <div class="divider-line"></div>
+
+  <div class="step">
+    <div class="step-head">
+      <div class="step-dot">3</div>
+      <div class="step-name">Toppings <span class="step-hint">pick any</span></div>
+    </div>
+    <div class="chips" id="topping-chips"></div>
+  </div>
+
+  <div class="divider-line"></div>
+
+  <div class="step">
+    <div class="step-head">
+      <div class="step-dot">4</div>
+      <div class="step-name">Sauce <span class="step-hint">required</span></div>
+    </div>
+    <div class="opts-grid wide" id="sauce-grid"></div>
+  </div>
+
+  <div class="divider-line"></div>
+
+  <div class="step">
+    <div class="step-head">
+      <div class="step-dot">5</div>
+      <div class="step-name">Side</div>
+    </div>
+    <div class="opts-grid" id="side-grid"></div>
+  </div>
+
+</div>
+
+<div class="bottom-bar">
+  <div class="complete-text" id="bottom-text">
+    <strong id="bottom-status">Start building</strong>
+    <span id="bottom-hint">Select protein, bun &amp; sauce</span>
+  </div>
+  <button class="cta-btn" id="cta-btn" disabled onclick="openReceipt()">View order</button>
+</div>
+
+<!-- RECEIPT MODAL -->
+<div class="modal-backdrop" id="modal" onclick="handleBackdropClick(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="receipt-title">Your Order</div>
+    <div class="receipt-sub" id="receipt-sub">Custom build</div>
+    <div id="receipt-items"></div>
+    <div class="receipt-total">
+      <span class="receipt-total-label">Total calories</span>
+      <span class="receipt-total-val" id="receipt-total-cal">–</span>
+    </div>
+    <div class="macro-summary">
+      <div class="ms-item"><div class="ms-val" id="rs-protein">–</div><div class="ms-label">Protein</div></div>
+      <div class="ms-item"><div class="ms-val" id="rs-fat">–</div><div class="ms-label">Fat</div></div>
+      <div class="ms-item"><div class="ms-val" id="rs-carbs">–</div><div class="ms-label">Carbs</div></div>
+    </div>
+    <button class="close-btn" onclick="closeReceipt()">Done</button>
+  </div>
+</div>
+
+<script>
+const PROTEINS = [
+  { id:'smash',   name:'SmashBurger',    emoji:'🥩',  cal:430, p:27, f:28, c:26, color:'#8B2635', h:22, label:'beef patty' },
+  { id:'double',  name:'Double Smash',   emoji:'🥩',  cal:680, p:48, f:46, c:26, color:'#6B1A28', h:32, label:'double beef patty' },
+  { id:'chicken', name:'Crispy Chicken', emoji:'🍗',  cal:490, p:35, f:24, c:42, color:'#B8860B', h:24, label:'crispy chicken' },
+  { id:'veggie',  name:'Veggie Shack',   emoji:'🌿',  cal:390, p:15, f:16, c:50, color:'#2E7D32', h:20, label:'veggie patty' },
+];
+const BUNS = [
+  { id:'potato',  name:'Potato roll',    emoji:'🍞',  cal:180, p:5,  f:3,  c:34, color:'#C8941A', h:28, topH:34 },
+  { id:'lettuce', name:'Lettuce wrap',   emoji:'🥬',  cal:10,  p:1,  f:0,  c:2,  color:'#388E3C', h:10, topH:12 },
+  { id:'gf',      name:'Gluten-free',    emoji:'🍞',  cal:200, p:4,  f:5,  c:38, color:'#A0783A', h:28, topH:34 },
+];
+const TOPPINGS = [
+  { id:'cheese',    name:'Cheese',          emoji:'🧀', cal:70,  p:4, f:6, c:0,  color:'#F4D03F' },
+  { id:'lettuce',   name:'Lettuce',         emoji:'🥬', cal:5,   p:0, f:0, c:1,  color:'#4CAF50' },
+  { id:'tomato',    name:'Tomato',          emoji:'🍅', cal:10,  p:0, f:0, c:2,  color:'#E53935' },
+  { id:'pickles',   name:'Pickles',         emoji:'🥒', cal:5,   p:0, f:0, c:1,  color:'#8BC34A' },
+  { id:'onion',     name:'Grilled onion',   emoji:'🧅', cal:30,  p:0, f:0, c:7,  color:'#CE93D8' },
+  { id:'bacon',     name:'Bacon',           emoji:'🥓', cal:90,  p:6, f:7, c:0,  color:'#7B1515' },
+  { id:'avocado',   name:'Avocado',         emoji:'🥑', cal:80,  p:1, f:7, c:4,  color:'#2E7D32' },
+  { id:'mushroom',  name:'Mushrooms',       emoji:'🍄', cal:25,  p:2, f:1, c:3,  color:'#5D4037' },
+  { id:'jalapeno',  name:'Jalapeño',        emoji:'🌶️', cal:5,   p:0, f:0, c:1,  color:'#C62828' },
+  { id:'egg',       name:'Fried egg',       emoji:'🍳', cal:90,  p:6, f:7, c:0,  color:'#F9A825' },
+];
+const SAUCES = [
+  { id:'shack',   name:'ShackSauce',   emoji:'🟡', cal:80, p:0, f:8, c:2,  color:'#F0C040' },
+  { id:'ketchup', name:'Ketchup',      emoji:'🔴', cal:20, p:0, f:0, c:5,  color:'#C62828' },
+  { id:'mustard', name:'Mustard',      emoji:'💛', cal:5,  p:0, f:0, c:1,  color:'#F9A825' },
+  { id:'sriracha',name:'Sriracha',     emoji:'🌶️', cal:15, p:0, f:0, c:3,  color:'#D32F2F' },
+  { id:'ranch',   name:'Ranch',        emoji:'🤍', cal:110,p:1, f:11,c:2,  color:'#ECEFF1' },
+  { id:'none',    name:'No sauce',     emoji:'∅',  cal:0,  p:0, f:0, c:0,  color:'#9E9E9E' },
+];
+const SIDES = [
+  { id:'fries',   name:'Crinkle fries',   emoji:'🍟', cal:320, p:5,  f:15, c:44 },
+  { id:'cfries',  name:'Cheese fries',    emoji:'🍟', cal:410, p:9,  f:22, c:46 },
+  { id:'shake',   name:'ShackMade Shake', emoji:'🥛', cal:560, p:14, f:24, c:76 },
+  { id:'none',    name:'No side',         emoji:'∅',  cal:0,   p:0,  f:0,  c:0  },
+];
+
+const state = { protein: null, bun: null, toppings: new Set(), sauce: null, side: null };
+
+function getTotals() {
+  let cal=0, p=0, f=0, c=0;
+  const pr = PROTEINS.find(x=>x.id===state.protein);
+  const bn = BUNS.find(x=>x.id===state.bun);
+  const sc = SAUCES.find(x=>x.id===state.sauce);
+  const sd = SIDES.find(x=>x.id===state.side);
+  [pr,bn,sc,sd].forEach(i => { if(i){cal+=i.cal;p+=i.p;f+=i.f;c+=i.c;} });
+  state.toppings.forEach(tid => {
+    const t = TOPPINGS.find(x=>x.id===tid);
+    if(t){cal+=t.cal;p+=t.p;f+=t.f;c+=t.c;}
+  });
+  return { cal, p, f, c };
+}
+
+function renderAll() {
+  renderGrid(PROTEINS, 'protein-grid', 'protein', false);
+  renderGrid(BUNS, 'bun-grid', 'bun', false);
+  renderChips(TOPPINGS, 'topping-chips');
+  renderGrid(SAUCES, 'sauce-grid', 'sauce', false);
+  renderGrid(SIDES, 'side-grid', 'side', false);
+  updateHeader();
+  updateBurger();
+}
+
+function renderGrid(items, id, key, multi) {
+  const el = document.getElementById(id);
+  el.innerHTML = '';
+  items.forEach(item => {
+    const isSel = multi ? state[key].has(item.id) : state[key]===item.id;
+    const btn = document.createElement('div');
+    btn.className = 'opt' + (isSel ? ' selected' : '');
+    btn.innerHTML = `<span class="opt-emoji">${item.emoji}</span><span class="opt-name">${item.name}</span><span class="opt-cal">${item.cal > 0 ? '+'+item.cal+' cal' : 'No cal'}</span>`;
+    btn.onclick = () => {
+      if(multi) { state[key].has(item.id) ? state[key].delete(item.id) : state[key].add(item.id); }
+      else { state[key] = item.id; }
+      renderAll();
+    };
+    el.appendChild(btn);
+  });
+}
+
+function renderChips(items, id) {
+  const el = document.getElementById(id);
+  el.innerHTML = '';
+  items.forEach(item => {
+    const isSel = state.toppings.has(item.id);
+    const btn = document.createElement('div');
+    btn.className = 'chip' + (isSel ? ' selected' : '');
+    btn.innerHTML = `${item.emoji} ${item.name} <span class="chip-cal">${item.cal>0?'+'+item.cal:''}</span>`;
+    btn.onclick = () => {
+      state.toppings.has(item.id) ? state.toppings.delete(item.id) : state.toppings.add(item.id);
+      renderAll();
+    };
+    el.appendChild(btn);
+  });
+}
+
+function updateHeader() {
+  const t = getTotals();
+  const hasCore = state.protein && state.bun && state.sauce;
+  document.getElementById('cal-display').textContent = t.cal > 0 ? t.cal : '–';
+
+  if (t.cal > 0) {
+    const pPct = Math.min(Math.round(t.p/50*100),100);
+    const fPct = Math.min(Math.round(t.f/65*100),100);
+    const cPct = Math.min(Math.round(t.c/100*100),100);
+    document.getElementById('m-protein').textContent = t.p + 'g';
+    document.getElementById('m-fat').textContent = t.f + 'g';
+    document.getElementById('m-carbs').textContent = t.c + 'g';
+    setBar('mf-protein', pPct);
+    setBar('mf-fat', fPct);
+    setBar('mf-carbs', cPct);
+  } else {
+    ['m-protein','m-fat','m-carbs'].forEach(id => document.getElementById(id).textContent='–');
+    ['mf-protein','mf-fat','mf-carbs'].forEach(id => { const el=document.getElementById(id); el.style.width='0%'; });
+  }
+
+  const btn = document.getElementById('cta-btn');
+  btn.disabled = !hasCore;
+
+  const status = document.getElementById('bottom-status');
+  const hint = document.getElementById('bottom-hint');
+  if (!state.protein) { status.textContent = 'Choose a protein'; hint.textContent = 'Step 1 of 5'; }
+  else if (!state.bun) { status.textContent = 'Choose a bun'; hint.textContent = 'Step 2 of 5'; }
+  else if (!state.sauce) { status.textContent = 'Choose a sauce'; hint.textContent = 'Step 4 of 5'; }
+  else {
+    const pr = PROTEINS.find(x=>x.id===state.protein);
+    status.textContent = pr.name;
+    hint.textContent = t.cal + ' cal · tap to view order';
+  }
+}
+
+function setBar(id, pct) {
+  const el = document.getElementById(id);
+  el.style.width = pct + '%';
+  el.className = 'macro-fill' + (pct>90?' over':pct>70?' warn':'');
+}
+
+function updateBurger() {
+  const stage = document.getElementById('burger-stage');
+  const empty = document.getElementById('burger-empty');
+  const pr = PROTEINS.find(x=>x.id===state.protein);
+  const bn = BUNS.find(x=>x.id===state.bun);
+
+  if (!pr) { empty.style.display=''; stage.querySelectorAll('.b-layer').forEach(e=>e.remove()); return; }
+  empty.style.display = 'none';
+
+  const layers = [];
+
+  if (bn) layers.push({ label: bn.name + ' (top)', color: bn.color, h: bn.topH, w: 88, r: `${Math.round(bn.topH*0.9)}px ${Math.round(bn.topH*0.9)}px 4px 4px` });
+
+  state.toppings.forEach(tid => {
+    const t = TOPPINGS.find(x=>x.id===tid);
+    if(t) layers.push({ label: t.name, color: t.color, h: 10, w: 78, r: '3px' });
+  });
+
+  const sc = SAUCES.find(x=>x.id===state.sauce);
+  if (sc && sc.id !== 'none') layers.push({ label: sc.name, color: sc.color, h: 8, w: 75, r: '3px' });
+
+  layers.push({ label: pr.label, color: pr.color, h: pr.h, w: 82, r: '4px' });
+
+  if (bn) layers.push({ label: bn.name + ' (bottom)', color: bn.color, h: bn.h, w: 88, r: `4px 4px ${Math.round(bn.h*0.6)}px ${Math.round(bn.h*0.6)}px` });
+
+  stage.querySelectorAll('.b-layer').forEach(e=>e.remove());
+  layers.forEach(layer => {
+    const div = document.createElement('div');
+    div.className = 'b-layer';
+    div.style.cssText = `width:${layer.w}%;height:${layer.h}px;background:${layer.color};border-radius:${layer.r};`;
+    const lbl = document.createElement('span');
+    lbl.className = 'b-layer-label';
+    lbl.textContent = layer.label;
+    div.appendChild(lbl);
+    stage.appendChild(div);
+  });
+}
+
+function openReceipt() {
+  const t = getTotals();
+  const pr = PROTEINS.find(x=>x.id===state.protein);
+  const bn = BUNS.find(x=>x.id===state.bun);
+  const sc = SAUCES.find(x=>x.id===state.sauce);
+  const sd = SIDES.find(x=>x.id===state.side);
+
+  document.getElementById('receipt-sub').textContent = pr.name + (bn ? ' on ' + bn.name : '');
+  document.getElementById('receipt-total-cal').textContent = t.cal + ' cal';
+  document.getElementById('rs-protein').textContent = t.p + 'g';
+  document.getElementById('rs-fat').textContent = t.f + 'g';
+  document.getElementById('rs-carbs').textContent = t.c + 'g';
+
+  const items = [];
+  if (pr) items.push({ name: pr.name, cal: pr.cal });
+  if (bn) items.push({ name: bn.name, cal: bn.cal });
+  state.toppings.forEach(tid => {
+    const tp = TOPPINGS.find(x=>x.id===tid);
+    if(tp) items.push({ name: tp.name, cal: tp.cal });
+  });
+  if (sc && sc.id!=='none') items.push({ name: sc.name, cal: sc.cal });
+  if (sd && sd.id!=='none') items.push({ name: sd.name, cal: sd.cal });
+
+  document.getElementById('receipt-items').innerHTML = items.map(i =>
+    `<div class="receipt-item"><span class="receipt-item-name">${i.name}</span><span class="receipt-item-cal">${i.cal > 0 ? i.cal+' cal' : '–'}</span></div>`
+  ).join('');
+
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeReceipt() {
+  document.getElementById('modal').classList.remove('open');
+}
+
+function handleBackdropClick(e) {
+  if (e.target === document.getElementById('modal')) closeReceipt();
+}
+
+renderAll();
+</script>
+</body>
+</html>
