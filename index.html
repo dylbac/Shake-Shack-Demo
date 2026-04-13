@@ -551,10 +551,10 @@
 
 <script>
 const PROTEINS = [
-  { id:'smash',   name:'SmashBurger',    emoji:'🥩',  cal:430, p:27, f:28, c:26, color:'#8B2635', h:22, label:'beef patty' },
-  { id:'double',  name:'Double Smash',   emoji:'🥩',  cal:680, p:48, f:46, c:26, color:'#6B1A28', h:32, label:'double beef patty' },
-  { id:'chicken', name:'Crispy Chicken', emoji:'🍗',  cal:490, p:35, f:24, c:42, color:'#B8860B', h:24, label:'crispy chicken' },
-  { id:'veggie',  name:'Veggie Shack',   emoji:'🌿',  cal:390, p:15, f:16, c:50, color:'#2E7D32', h:20, label:'veggie patty' },
+  { id:'smash',   name:'SmashBurger',    emoji:'🥩',  cal:190, p:19, f:12, c:0, color:'#8B2635', h:22, label:'beef patty' },
+  { id:'double',  name:'Double Smash',   emoji:'🥩',  cal:380, p:38, f:24, c:0, color:'#6B1A28', h:32, label:'double beef patty' },
+  { id:'chicken', name:'Crispy Chicken', emoji:'🍗',  cal:270, p:28, f:15, c:5, color:'#B8860B', h:24, label:'crispy chicken' },
+  { id:'veggie',  name:'Veggie Shack',   emoji:'🌿',  cal:210, p:8, f:4, c:20, color:'#2E7D32', h:20, label:'veggie patty' },
 ];
 const BUNS = [
   { id:'potato',  name:'Potato roll',    emoji:'🍞',  cal:180, p:5,  f:3,  c:34, color:'#C8941A', h:28, topH:34 },
@@ -567,14 +567,14 @@ const TOPPINGS = [
   { id:'tomato',    name:'Tomato',          emoji:'🍅', cal:10,  p:0, f:0, c:2,  color:'#E53935' },
   { id:'pickles',   name:'Pickles',         emoji:'🥒', cal:5,   p:0, f:0, c:1,  color:'#8BC34A' },
   { id:'onion',     name:'Grilled onion',   emoji:'🧅', cal:30,  p:0, f:0, c:7,  color:'#CE93D8' },
-  { id:'bacon',     name:'Bacon',           emoji:'🥓', cal:90,  p:6, f:7, c:0,  color:'#7B1515' },
+  { id:'bacon',     name:'Bacon',           emoji:'🥓', cal:70,  p:6, f:7, c:0,  color:'#7B1515' },
   { id:'avocado',   name:'Avocado',         emoji:'🥑', cal:80,  p:1, f:7, c:4,  color:'#2E7D32' },
   { id:'mushroom',  name:'Mushrooms',       emoji:'🍄', cal:25,  p:2, f:1, c:3,  color:'#5D4037' },
   { id:'jalapeno',  name:'Jalapeño',        emoji:'🌶️', cal:5,   p:0, f:0, c:1,  color:'#C62828' },
   { id:'egg',       name:'Fried egg',       emoji:'🍳', cal:90,  p:6, f:7, c:0,  color:'#F9A825' },
 ];
 const SAUCES = [
-  { id:'shack',   name:'ShackSauce',   emoji:'🟡', cal:80, p:0, f:8, c:2,  color:'#F0C040' },
+  { id:'shack',   name:'ShackSauce',   emoji:'🟡', cal:60, p:0, f:8, c:2,  color:'#F0C040' },
   { id:'ketchup', name:'Ketchup',      emoji:'🔴', cal:20, p:0, f:0, c:5,  color:'#C62828' },
   { id:'mustard', name:'Mustard',      emoji:'💛', cal:5,  p:0, f:0, c:1,  color:'#F9A825' },
   { id:'sriracha',name:'Sriracha',     emoji:'🌶️', cal:15, p:0, f:0, c:3,  color:'#D32F2F' },
@@ -584,7 +584,6 @@ const SAUCES = [
 const SIDES = [
   { id:'fries',   name:'Crinkle fries',   emoji:'🍟', cal:320, p:5,  f:15, c:44 },
   { id:'cfries',  name:'Cheese fries',    emoji:'🍟', cal:410, p:9,  f:22, c:46 },
-  { id:'shake',   name:'ShackMade Shake', emoji:'🥛', cal:560, p:14, f:24, c:76 },
   { id:'none',    name:'No side',         emoji:'∅',  cal:0,   p:0,  f:0,  c:0  },
 ];
 
